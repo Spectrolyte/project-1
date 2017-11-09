@@ -2,7 +2,8 @@
 
 // word bank -- randomly select search term from here
 var searchTerms = ['puppy','cats','pink flowers','trees and sun'];
-// add an indicator to determine if a term was already searched/displayed to the users
+// add an indicator to determine if a term was already searched/displayed to the users -- refernce trivia game structure
+	// prevents re-display of images
 	// true/false asked property
 	// create a counter -- if it matches the amount of images we want to show, stop the game
 
@@ -46,7 +47,7 @@ $('#generate-photo-info').click(function () {
 		var imageLink = $('<a>').attr('target', '_blank')
 								.attr('href', chosen.pageURL)
 								.text('More about this image');
-								
+
 		// appending selected image and photographer link to body -- testing
 		$('body').append(image).append(profileLink).append(imageLink);
 
