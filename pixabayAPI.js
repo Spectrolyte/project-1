@@ -9,7 +9,7 @@ var searchTerms = ['puppy','cats','pink flowers','trees and sun'];
 
 $(document).ready(function () {
 
-$('button').click(function () {
+$('#generate-photo-info').click(function () {
 	//create random number generator
 		// to select random word from our word bank
 		// to select random hit from our ajax call
@@ -31,16 +31,31 @@ $('button').click(function () {
 		// results is a list of the hits we received after running a search on selected search term
 		var results = response.hits
 		// chosen is the randomly selected element for this ajax call
-		var chosen = generateRandomNum(0, results.length);
+		var chosen = results[generateRandomNum(0, results.length)];
 		// preview image -- need to enlarge image before displaying to users
-		var image = $('<img>').attr('src', results[chosen].previewURL);
-		// key words -- if users guess any of these words, score bonus points(?)
-		var tags = results[chosen].tags;
-		// appending selected image to body -- testing
-		$('body').append(image);
+		var image = $('<img>').attr('src', chosen.previewURL);
+		// string of key words -- if users guess any of these words, score bonus points(?)
+		var tags = chosen.tags;
+		// photographer of chosen image
+		var photographer = chosen.user;
+		// link to photographer's profile page
+		var profileLink = $('<a>').attr('target', '_blank')
+								  .attr('href', 'https://pixabay.com/en/users/' + photographer)
+								  .text('See more work from this photographer');
+		// link to presented photo
+		var imageLink = $('<a>').attr('target', '_blank')
+								.attr('href', chosen.pageURL)
+								.text('More about this image');
+								
+		// appending selected image and photographer link to body -- testing
+		$('body').append(image).append(profileLink).append(imageLink);
+
 		console.log(response);
-		console.log(tags);
 		console.log(chosen);
+		console.log(tags);
+		console.log(typeof tags);
+		console.log(photographer);
+		console.log(profileLink);
 	});
 
 	
