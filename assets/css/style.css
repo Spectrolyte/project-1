@@ -1,0 +1,33 @@
+body {
+    background-color: #28c9cb;
+}
+
+h1 {
+    text-align: center;
+    border-color: #fed361;
+    border-width: 5px;
+    border-style: solid;
+    background-color: #1fb0b0;
+    color: white;
+    padding: 10px;
+}
+
+.sun {
+    width: 100%;
+}
+
+.circle {
+    image-orientation: center;
+}
+
+#timer {
+    text-align: center;
+}
+
+.player {
+    text-align: center;
+}
+
+#teamscore {
+    padding-left: 50%;
+}
