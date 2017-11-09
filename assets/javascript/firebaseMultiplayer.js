@@ -28,9 +28,15 @@ database.ref().on('value', function (snapshot) {
 	})
 })
 
-// when player enters room:
+// creating game-rooms with max occupancy of 2
+// when player enters page:
 	// create child node in game-rooms folder firebase
 		// games will be stored here
+		// children of this node will have creator, joiner, and status properties
+			// if room is full, start the game
+			
+var gameRoomRef = database.ref('/game-rooms');
+
 
 // ---------------- keeping track of connections ----------
 
