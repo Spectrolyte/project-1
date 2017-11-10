@@ -7,13 +7,16 @@ h1 {
     border-color: #fed361;
     border-width: 5px;
     border-style: solid;
+    border-radius: 25px;
     background-color: #1fb0b0;
     color: white;
     padding: 10px;
 }
 
 .sun {
-    width: 100%;
+    width: 75%;
+    display:block;
+    margin:auto;
 }
 
 .circle {
@@ -22,6 +25,11 @@ h1 {
 
 #timer {
     text-align: center;
+    background-color: #af2380;
+    color: white;
+    padding: 10px;
+    font-family: bold;
+    border-radius: 25px;
 }
 
 .player {
@@ -29,5 +37,40 @@ h1 {
 }
 
 #teamscore {
-    padding-left: 50%;
+    text-align: center;
+    background-color: #af2380;
+    color: white;
+    margin: auto;
+    width: 100%;
+    padding: 10px;
+    border-radius: 25px;
+}
+
+#picture {
+    margin: auto;
+    width: 100%;
+    padding: 10px;
+    border-radius: 25px;
+    border-color: #1eb2b1;
+    border-width: 30px;
+    border-style: solid;
+}
+
+#userInput {
+    text-align: center;
+    background-color: #fdfdfd;
+    color: black;
+    margin: auto;
+    width: 100%;
+    padding: 10px;
+    border-radius: 25px;
+}
+
+.wrapper {
+    text-align: center;
+}
+
+.btn {
+    position: absolute;
+    top: 50%;
 }
