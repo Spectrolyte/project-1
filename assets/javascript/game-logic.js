@@ -223,17 +223,25 @@ function checkReturningUser () {
 
 	var name = displayName;
 	var ID = UID;
+	var points;
 
 	returningPlayersRef.on('value', function (snapshot) {
 		console.log(snapshot.val());
 		// if user is a returning user, set data specific to user and add child to playersRef folder
 		if (snapshot.child(ID).exists()) {
-			// call checkNumPlayers
-			console.log(snapshot.val());
-			console.log(snapshot.val().ID);
-			console.log(snapshot.val().displayName);
-			console.log(snapshot.val().points);
+			var user = snapshot.child(ID);
+
+			//reassigning values
+			name = user.displayName;
+			points = user.points;
+
+			console.log(user);
+			console.log(user.displayName);
+			console.log(user.points);
 			console.log('hello again');
+
+			// call checkNumPlayers
+			checkNumPlayers(name, ID, points);
 		}
 		// else, create new child node in the returning folder
 		else {
@@ -247,6 +255,7 @@ function checkReturningUser () {
 			console.log('added new user');
 
 			// call checkNumPlayers
+			checkNumPlayers(name, ID, points);
 
 		}
 	})
@@ -279,9 +288,9 @@ function checkNumPlayers (name, UID, points) {
     player2Ref = playersRef.child('player2');
 
     player2Ref.set({
-		name: 'INSERT NAME HERE2',
-		ID: 'INSERT UID HERE',
-		points: 'INSERT POINTS HERE'
+		name: name,
+		ID: UID,
+		points: points
 	})
 
 	player2Exists = true;
@@ -293,9 +302,9 @@ function checkNumPlayers (name, UID, points) {
     player1Ref = playersRef.child('player1');
 
     player1Ref.set({
-		name: 'INSERT NAME HERE1',
-		ID: 'INSERT UID HERE',
-		points: 'INSERT POINTS HERE'
+		name: name,
+		ID: UID,
+		points: points
 	})
 
 	player1Exists = true;
