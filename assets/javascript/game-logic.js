@@ -208,6 +208,9 @@ firebase.auth().onAuthStateChanged(function(user) {
     console.log(user);
     console.log(user.uid);
     console.log(user.displayName);
+
+    checkReturningUser();
+
   } else {
     // No user is signed in.
     console.log('REEEEE');
@@ -236,8 +239,8 @@ function checkReturningUser () {
 		else {
 			// this code snippet creates new child in the returning folder in Firebase
 			// each child name will be users' ID that will hold user name and points
-			returningPlayersRef.child(ID).set({
-				name: displayName,
+			database.ref('/returning/' + ID).set({
+				name: name,
 				points: 0
 			})
 
@@ -248,8 +251,6 @@ function checkReturningUser () {
 		}
 	})
 }
-
-checkReturningUser();
 
 playersRef.on('value', function (snapshot) {
 
