@@ -285,9 +285,7 @@ function checkNumPlayers (name, UID, points) {
     if (player1Exists) {
       playerNum = 2;
     // sets second player to player2
-    player2Ref = playersRef.child('player2');
-
-    player2Ref.set({
+    database.ref('/players/' + playerNum).set({
 		name: name,
 		ID: UID,
 		points: points
@@ -299,9 +297,8 @@ function checkNumPlayers (name, UID, points) {
     else {
     playerNum = 1;
     // sets first player to player1
-    player1Ref = playersRef.child('player1');
 
-    player1Ref.set({
+    database.ref('/players/' + playerNum).set({
 		name: name,
 		ID: UID,
 		points: points
