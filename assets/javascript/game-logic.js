@@ -180,8 +180,7 @@ var UID;
 var displayName;
 var points;
 
-var player1Exists = false;
-var player2Exists = false;
+var playerNum = 0;
 
 var currentPlayers = null;
 
@@ -235,13 +234,18 @@ function checkReturningUser () {
 			name = user.displayName;
 			points = user.points;
 
+			playerNum++;
+			// add user to players folder
+			database.ref('/players/' + playerNum).set({
+				name: name,
+				ID: UID,
+				points: points
+			})
+
 			console.log(user);
-			console.log(user.displayName);
+			console.log(user.name);
 			console.log(user.points);
 			console.log('hello again');
-
-			// call checkNumPlayers
-			checkNumPlayers(name, ID, points);
 		}
 		// else, create new child node in the returning folder
 		else {
@@ -252,10 +256,15 @@ function checkReturningUser () {
 				points: 0
 			})
 
-			console.log('added new user');
+			playerNum++;
+			// add user to players folder
+			database.ref('/players/' + playerNum).set({
+				name: name,
+				ID: UID,
+				points: points
+			})
 
-			// call checkNumPlayers
-			checkNumPlayers(name, ID, points);
+			console.log('added new user');
 
 		}
 	})
@@ -271,7 +280,7 @@ playersRef.on('value', function (snapshot) {
 // check the number of current players
 // assumes that the user logged in via Google Auth already
 // takes in their data as arguments
-function checkNumPlayers (name, UID, points) {
+/*function checkNumPlayers (name, UID, points) {
 
 	var player1Ref;
 	var player2Ref;
@@ -283,7 +292,7 @@ function checkNumPlayers (name, UID, points) {
 	if (currentPlayers < 2) {
 
     if (player1Exists) {
-      playerNum = 2;
+    playerNum = 2;
     // sets second player to player2
     database.ref('/players/' + playerNum).set({
 		name: name,
@@ -320,7 +329,7 @@ function checkNumPlayers (name, UID, points) {
     else {
     	alert("Sorry, Game Full! Try Again Later!");
   }
-}
+}*/
 
 function startGame () {
 	// start game
