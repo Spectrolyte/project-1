@@ -13,9 +13,13 @@ $(document).ready(function () {
 	// points accumulated by user
 	var p1points = 0;
 	var p2points = 0;
+	var teamPoints = 0;
+
 	// stores user guesses to be referenced to later and compared
 	var p1guesses = [];
 	var p2guesses = [];
+
+	var p1p2Matches = [];
 
 // change click event to function on setTimeout -- each round lasts 30 seconds
 $('#generate-photo-info').click(function () {
@@ -86,18 +90,60 @@ $('#generate-photo-info').click(function () {
 			console.log(p2points);
 		}
 
+		// calculate team points
+		function calculateTeamPoints () {
+			// if player 1 and player 2 share a similar word in their guesses, grant one point to each
+				// calculate difference between the array lengths
+				// whichever one has less elements, add placeholders to have same lengths
+				// iterate over one array, check to see if a word exists in another
+					// if there's a match, push to new array
+					// count length of new array and add points to each player
+			if (p1guesses.length > p2guesses.length) {
+				// placeholder is uppercase to dinstinguish between user guesses
+				p2guesses.push('EXTRA');
+				console.log(p1guesses);
+				console.log(p2guesses);
+			}
+			else if (p1guesses.length < p2guesses.length) {
+				p1guesses.push('EXTRA');
+				console.log(p1guesses);
+				console.log(p2guesses);
+			}
+
+			for (var i=0; i < p2guesses.length; i++) {
+				if (p1guesses.includes(p2guesses[i])) {
+					p1p2Matches.push(p2guesses[i]);
+					console.log(p1guesses[i]);
+				}
+			}
+			teamPoints = p1p2Matches.length;
+
+			p1points += teamPoints;
+			p2points += teamPoints;
+			console.log(p1p2Matches);
+			
+		}
+
 		// capture user input and store in array
 		$('#p1-submit-btn').click(function (event) {
 			// prevent page reload
 			event.preventDefault();
 
 			// capture user input
-			var p1guess = $('#p1-guess').val();
+			// convert to lowercase
+			var p1guess = $('#p1-guess').val().toLowerCase();
 			console.log(p1guess);
 
-			// adds user guess to guesses array
-			p1guesses.push(p1guess);
-			console.log(p1guesses);
+			// adds user guess to guesses array if it doesn't already exist
+			if (!p1guesses.includes(p1guess)) {
+				p1guesses.push(p1guess);
+				console.log(p1guesses);
+				$('#p1-alert').text('');
+			}
+			else {
+				// alert user that they guessed that word already
+				$('#p1-alert').text('You already guessed ' + p1guess);
+			}
 
 			// clear input field
 			$('#p1-guess').val('');
@@ -108,12 +154,19 @@ $('#generate-photo-info').click(function () {
 			event.preventDefault();
 
 			// capture user input
-			var p2guess = $('#p2-guess').val();
+			var p2guess = $('#p2-guess').val().toLowerCase();
 			console.log(p2guess);
 
-			// adds user guess to guesses array
-			p2guesses.push(p2guess);
-			console.log(p2guesses);
+			// adds user guess to guesses array if it doesn't already exist
+			if (!p2guesses.includes(p2guess)) {
+				p2guesses.push(p2guess);
+				console.log(p2guesses);
+				$('#p2-alert').text('');
+			}
+			else {
+				// alert user that they guessed that word already
+				$('#p2-alert').text('You already guessed ' + p2guess);
+			}
 
 			// clear input field
 			$('#p2-guess').val('');
@@ -121,6 +174,7 @@ $('#generate-photo-info').click(function () {
 
 		// displays total points accumulated by user
 		$('#show-stats').click(function () {
+			calculateTeamPoints();
 			addBonusPoints();
 		})
 
