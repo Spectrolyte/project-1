@@ -249,6 +249,8 @@ function checkReturningUser () {
 		}
 		// else, create new child node in the returning folder
 		else {
+			name = user.displayName;
+			points = user.points;
 			// this code snippet creates new child in the returning folder in Firebase
 			// each child name will be users' ID that will hold user name and points
 			database.ref('/returning/' + ID).set({
