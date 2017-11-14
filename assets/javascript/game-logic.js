@@ -259,6 +259,8 @@ function checkReturningUser () {
 		}
 		// else, create new child node in the returning folder
 		else {
+			var user = snapshot.child(ID).val();
+			
 			name = user.displayName;
 			points = user.points;
 			// this code snippet creates new child in the returning folder in Firebase
