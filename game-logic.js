@@ -9,97 +9,61 @@ var searchTerms = ['puppy','cats','pink flowers','trees and sun'];
 
 
 $(document).ready(function () {
-
 	// points accumulated by user -- these will be added to the existing value in Firebase
-	var p1points = 0;
-	var p2points = 0;
+	var p1points = 0; //Not using this
+	var p2points = 0; //Not using this
 
 	var teamPoints = 0;
-
+	var guess; // Defined later
 	// stores user guesses to be referenced to later and compared
-	var p1guesses = [];
-	var p2guesses = [];
-
-	var p1p2Matches = [];
+ 	var guesses = [];
 
 //create random number generator
 	// to select random word from our word bank
 	// to select random hit from our ajax call
-function generateRandomNum (min, max) {
-	return Math.floor(Math.random() * max) + min;
-}
-// calculate team points
-function calculateTeamPoints () {
-	// if player 1 and player 2 share a similar word in their guesses, grant one point to each
-		// calculate difference between the array lengths
-		// whichever one has less elements, add placeholders to have same lengths
-		// iterate over one array, check to see if a word exists in another
-			// if there's a match, push to new array
-			// count length of new array and add points to each player
-	if (p1guesses.length > p2guesses.length) {
-		// placeholder is uppercase to dinstinguish between user guesses
-		p2guesses.push('EXTRA');
-	}
-	else if (p1guesses.length < p2guesses.length) {
-		p1guesses.push('EXTRA');
-	}
-
-	for (var i=0; i < p2guesses.length; i++) {
-		if (p1guesses.includes(p2guesses[i])) {
-			p1p2Matches.push(p2guesses[i]);
-		}
-	}
-	teamPoints = p1p2Matches.length;
-
-	p1points += teamPoints;
-	p2points += teamPoints;
-	
-}
+	function generateRandomNum (min, max) {
+		return Math.floor(Math.random() * max) + min;
+	};
 
 // capture user input and store in respective array
 // base the input field on the currentuser (Google Auth)
-$('#p1-submit-btn').click(function (event) {
-	// prevent page reload
-	event.preventDefault();
+	$('#submit').click(function (event) {
+		// prevent page reload
+		event.preventDefault();
+		// capture user input
+		// convert to lowercase
+		guess = $('#userInput').val().toLowerCase();
 
-	// capture user input
-	// convert to lowercase
-	var p1guess = $('#p1-guess').val().toLowerCase();
+		//Pull guesses folder, convert into array, check if that guess is in the array.
+		// if guess is not in array... aka return is -1,
+		//         console.log("no match!") -- alert user with something
+		//		   push the word into the firebase folder
+		//		else
+		//          teamPoints++
+		//			console.log("You got a point!") - alert user with something
+		//
+		// when timer == 0. EMPTY guesses folder of guesses.
 
-	// adds user guess to guesses array if it doesn't already exist
-	if (!p1guesses.includes(p1guess)) {
-		p1guesses.push(p1guess);
-		$('#p1-alert').text('');
-	}
-	else {
-		// alert user that they guessed that word already
-		alert('You already guessed ' + p1guess);
-	}
+		//TODO: PUSH GUESS TO FIREBASE
+		guesses.push(guess);
 
-	// clear input field
-	$('#p1-guess').val('');
-})
+		for(var i=0; i<guesses.length; i++) {
+		// adds user guess to guesses array if it doesn't already exist
+			if (guesses[i] == -1) {
+				console.log("No match!");
+				//TODO: ADD SOME UI FEATURE TO INDICATE NO MATCH
+				//TODO: Add that word to the array.
+				//TODO: Update to firebase.
+			}
+			else {
+				teamPoints++
+				//TODO: UPDATE FireBase
+			}
+		};
 
-/*$('#p2-submit-btn').click(function (event) {
-	// prevent page reload
-	event.preventDefault();
-
-	// capture user input
-	var p2guess = $('#p2-guess').val().toLowerCase();
-
-	// adds user guess to guesses array if it doesn't already exist
-	if (!p2guesses.includes(p2guess)) {
-		p2guesses.push(p2guess);
-		$('#p2-alert').text('');
-	}
-	else {
-		// alert user that they guessed that word already
-		alert('You already guessed ' + p2guess);
-	}
-
-	// clear input field
-	$('#p2-guess').val('');
-})*/
+		// clear input field
+		$('#userInput').val('');
+	});
 
 // change click event to function on setTimeout -- each round lasts 30 seconds
 // run this function, then setTimeout on point calculation for 30 seconds
@@ -121,7 +85,6 @@ function showImage () {
 		// chosen is the randomly selected element for this ajax call
 		var chosen = results[generateRandomNum(0, results.length)];
 		// preview image -- need to enlarge image before displaying to users
-		// look into setting image size
 		var image = $('<img>').attr('src', chosen.previewURL);
 		// string of key words -- if users guess any of these words, score bonus points
 		var tags = chosen.tags.split(', ');
@@ -138,23 +101,6 @@ function showImage () {
 
 		// appending selected image and photographer link to body -- testing
 		$('body').append(image).append(profileLink).append(imageLink);
-
-		// if guesses includes one of the actual tags associated with the image (from API), grant 2 points.
-		// iterate through tags and check to see if they exist in the guesses array
-			// refactor this code later for multiplayer feature
-		function addBonusPoints () {
-
-			for (var i=0; i < tags.length; i++) {
-				// if player one guessed a correct tag, award 2 points
-				if (p1guesses.includes(tags[i])) {
-					p1points += 2;
-				}
-				// if player one guessed a correct tag, award 2 points
-				if (p2guesses.includes(tags[i])) {
-					p2points += 2;
-				}
-			}
-		}
 
 		// displays total points accumulated by user
 		function showFinalScore () {
@@ -212,7 +158,7 @@ function checkReturningUser () {
 	var name;
 	var ID;
 	var points;
-	
+
 	// if user is a returning user, set data specific to user and add child to playersRef folder
 		// call checkNumPlayers
 	// else, create new child node in the returning folder
@@ -228,7 +174,7 @@ function checkReturningUser () {
 }
 
 	/*returningPlayersRef.on('child_added', function (snapshot) {
-		
+
 		console.log(snapshot.val());
 	})*/
 
@@ -314,18 +260,4 @@ function endGame () {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-})
+});
