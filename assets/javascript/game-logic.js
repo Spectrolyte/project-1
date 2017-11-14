@@ -229,7 +229,7 @@ function checkReturningUser () {
 		console.log(snapshot.val());
 		// if user is a returning user, set data specific to user and add child to playersRef folder
 		if (snapshot.child(UID).exists()) {
-			var user = snapshot.child(ID).val();
+			var user = snapshot.child(UID).val();
 
 			console.log(user);
 			console.log(user.name);
