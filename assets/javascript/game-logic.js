@@ -101,6 +101,8 @@ $('#p1-submit-btn').click(function (event) {
 	$('#p2-guess').val('');
 })*/
 
+// ==============================================================================
+
 // change click event to function on setTimeout -- each round lasts 30 seconds
 // run this function, then setTimeout on point calculation for 30 seconds
 function showImage () {
@@ -228,7 +230,7 @@ function checkReturningUser () {
 		console.log(snapshot.val());
 		// if user is a returning user, set data specific to user and add child to playersRef folder
 		if (snapshot.child(ID).exists()) {
-			var user = snapshot.child(ID).val();
+			var userData = snapshot.child(ID).val();
 
 			//reassigning values
 			name = user.displayName;
@@ -242,15 +244,15 @@ function checkReturningUser () {
 				points: points
 			})
 
-			console.log(user);
-			console.log(user.name);
-			console.log(user.points);
+			console.log(userData);
+			console.log(userData.name);
+			console.log(userData.points);
 			console.log('hello again');
 		}
 		// else, create new child node in the returning folder
 		else {
 			name = user.displayName;
-			points = user.points;
+			
 			// this code snippet creates new child in the returning folder in Firebase
 			// each child name will be users' ID that will hold user name and points
 			database.ref('/returning/' + ID).set({
@@ -263,7 +265,7 @@ function checkReturningUser () {
 			database.ref('/players/' + playerNum).set({
 				name: name,
 				ID: UID,
-				points: points
+				points: 0
 			})
 
 			console.log('added new user');
