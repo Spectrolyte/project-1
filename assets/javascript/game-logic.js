@@ -10,17 +10,118 @@ var searchTerms = ['puppy','cats','pink flowers','trees and sun'];
 
 $(document).ready(function () {
 
-	// points accumulated by user -- these will be added to the existing value in Firebase
-	var p1points = 0;
-	var p2points = 0;
+// ============================================================================
 
-	var teamPoints = 0;
+var database = firebase.database();
 
-	// stores user guesses to be referenced to later and compared
-	var p1guesses = [];
-	var p2guesses = [];
+// Google Auth data capture -- NEED TO FIGURE THIS OUT
+var user = firebase.auth().currentUser;
+var UID;
+var displayName;
+var points;
 
-	var p1p2Matches = [];
+var currentPlayers = null;
+
+var returningRef = database.ref('/returningUsers/' + UID);
+var currentPlayersRef = database.ref('/currentPlayers/' + UID);
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+  	UID = user.uid;
+	displayName = user.displayName;
+
+    console.log(user);
+    console.log(UID);
+    console.log(displayName);
+    console.log('signed in');
+    console.log('=================================');
+
+    // add to returningUsers object
+
+	returningRef.transaction(function(currentData) {
+	  if (currentData === null) {
+	    return {name: displayName, points: 0};
+	  } else {
+	    console.log('User' + displayName + 'already exists.');
+	    return; // Abort the transaction.
+	  }
+	}, function(error, committed, snapshot) {
+	  if (error) {
+	    console.log('Transaction failed abnormally!', error);
+	  } else if (!committed) {
+	    console.log('We aborted the transaction (because' + UID + 'already exists).');
+	  } else {
+	    console.log('User' + displayName + 'added!');
+	  }
+	  console.log(displayName + '\'s data: ,' + snapshot.val());
+	});
+
+	// add to game-room if there's < 2 players
+	
+	if (currentPlayers < 2) {
+		currentPlayersRef.transaction(function(currentData) {
+		  if (currentData === null) {
+		    return {name: displayName, points: 0};
+		  } else {
+		    console.log('User' + displayName + 'already added to game-room.');
+		    return; // Abort the transaction.
+		  }
+		}, function(error, committed, snapshot) {
+		  if (error) {
+		    console.log('Transaction failed abnormally!', error);
+		  } else if (!committed) {
+		    console.log('We aborted the transaction (because' + UID + 'already added to game-room).');
+		  } else {
+		    console.log('User' + displayName + 'added!');
+		  }
+		  console.log(displayName + '\'s data: ,' + snapshot.val());
+		});
+	}
+	else {
+		alert('sorry, there\'s no more room.')
+	}
+
+
+  } else {
+    // No user is signed in.
+    console.log('REEEEE');
+  }
+
+});
+
+currentPlayersRef.on('value', function (snapshot) {
+
+	currentPlayers = snapshot.numChildren();
+
+	// when player disconnects, remove from folder
+	
+	// when player disconnects, end game -- no points added
+
+	console.log('current players: ' + currentPlayers)
+
+})
+
+
+// =============================================================================
+// create players obj that has player numbers as properties and values as user data objs from returningUsers
+var players = {};
+
+function createPlayerObj () {
+
+}
+
+
+// points accumulated by user -- these will be added to the existing value in Firebase
+var p1points = 0;
+var p2points = 0;
+
+var teamPoints = 0;
+
+// stores user guesses to be referenced to later and compared
+var p1guesses = [];
+var p2guesses = [];
+
+var p1p2Matches = [];
 
 //create random number generator
 	// to select random word from our word bank
@@ -101,8 +202,6 @@ $('#p1-submit-btn').click(function (event) {
 	$('#p2-guess').val('');
 })*/
 
-// ==============================================================================
-
 // change click event to function on setTimeout -- each round lasts 30 seconds
 // run this function, then setTimeout on point calculation for 30 seconds
 function showImage () {
@@ -169,99 +268,10 @@ function showImage () {
 }
 
 function updateFirebaseUserData () {
-	// update user data by accessing child node's points property
+	// grab user data from returningUsers folder
+		// get points value
+		// increment points accordingly
 }
-
-// ============================================================================
-
-var database = firebase.database();
-
-// Google Auth data capture -- NEED TO FIGURE THIS OUT
-var user = firebase.auth().currentUser;
-var UID;
-var displayName;
-var points;
-
-var playerNum = 0;
-
-var currentPlayers = null;
-var player1Data = null;
-var player2Data = null;
-
-// players in game will be stored here
-var playersRef = database.ref('/players');
-
-// upon connecting and going through Google Auth, store UID, name, and points to returningPlayersRef
-// folder in Firebase that will hold Google Auth data
-var returningPlayersRef = database.ref('/returning');
-
-firebase.auth().onAuthStateChanged(function(user) {
-  if (user) {
-  	UID = user.uid;
-	displayName = user.displayName;
-
-    console.log(user);
-    console.log(UID);
-    console.log(displayName);
-    console.log('signed in');
-    console.log('=================================');
-
-    // add to returningUsers object
-	var returningRef = database.ref('/returningUsers/' + UID);
-
-	returningRef.transaction(function(currentData) {
-	  if (currentData === null) {
-	    return {name: displayName, points: 0};
-	  } else {
-	    console.log('User' + displayName + 'already exists.');
-	    return; // Abort the transaction.
-	  }
-	}, function(error, committed, snapshot) {
-	  if (error) {
-	    console.log('Transaction failed abnormally!', error);
-	  } else if (!committed) {
-	    console.log('We aborted the transaction (because' + UID + 'already exists).');
-	  } else {
-	    console.log('User' + displayName + 'added!');
-	  }
-	  console.log(displayName + '\'s data: ,' + snapshot.val());
-	});
-
-	// add to game-room
-	var currentPlayersRef = database.ref('/currentPlayers/' + UID);
-
-	currentPlayersRef.transaction(function(currentData) {
-	  if (currentData === null) {
-	    return {name: displayName, points: 0};
-	  } else {
-	    console.log('User' + displayName + 'already added to game-room.');
-	    return; // Abort the transaction.
-	  }
-	}, function(error, committed, snapshot) {
-	  if (error) {
-	    console.log('Transaction failed abnormally!', error);
-	  } else if (!committed) {
-	    console.log('We aborted the transaction (because' + UID + 'already added to game-room).');
-	  } else {
-	    console.log('User' + displayName + 'added!');
-	  }
-	  console.log(displayName + '\'s data: ,' + snapshot.val());
-	});
-
-
-  } else {
-    // No user is signed in.
-    console.log('REEEEE');
-  }
-
-});
-
-playersRef.on('value', function (snapshot) {
-
-	currentPlayers = snapshot.numChildren();
-	console.log('current players: ' + currentPlayers)
-
-})
 
 function startGame () {
 	// start game
@@ -273,12 +283,6 @@ function endGame () {
 	// stop timers
 	// ask if players want to play again
 }
-
-// =============================================================================
-
-
-
-
 
 
 
