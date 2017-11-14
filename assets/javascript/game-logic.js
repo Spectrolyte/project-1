@@ -209,8 +209,9 @@ firebase.auth().onAuthStateChanged(function(user) {
 	displayName = user.displayName;
 
     console.log(user);
-    console.log(user.uid);
-    console.log(user.displayName);
+    console.log(UID);
+    console.log(displayName);
+    console.log('signed in');
 
     checkReturningUser();
 
@@ -224,33 +225,11 @@ firebase.auth().onAuthStateChanged(function(user) {
 // when the user logs in, check if they've already played before -- run function upon load
 function checkReturningUser () {
 
-	var name = displayName;
-	var ID = UID;
-	var points;
-
 	returningPlayersRef.on('value', function (snapshot) {
 		console.log(snapshot.val());
 		// if user is a returning user, set data specific to user and add child to playersRef folder
-		if (snapshot.child(ID).exists()) {
+		if (snapshot.child(UID).exists()) {
 			var user = snapshot.child(ID).val();
-
-			//reassigning values
-			name = user.displayName;
-			points = user.points;
-
-			/*player1Data = {
-				name: name,
-				ID: UID,
-				points: points
-			}*/
-
-			playerNum++;
-			// add user to players folder
-			database.ref('/players/' + playerNum.toString()).set({
-				name: name,
-				ID: UID,
-				points: points
-			})
 
 			console.log(user);
 			console.log(user.name);
@@ -261,24 +240,16 @@ function checkReturningUser () {
 		else {
 			// this code snippet creates new child in the returning folder in Firebase
 			// each child name will be users' ID that will hold user name and points
-			database.ref('/returning/' + ID).set({
+			database.ref('/returning/' + UID).set({
 				name: name,
 				points: 0
 			})
 
-			var user = snapshot.child(ID).val();
-			
-			name = user.displayName;
-			points = user.points;
-			
-			playerNum++;
-			// add user to players folder
-			database.ref('/players/' + playerNum.toString()).set({
-				name: name,
-				ID: UID,
-				points: points
-			})
+			var user = snapshot.child(UID).val();
 
+			console.log(user);
+			console.log(user.name);
+			console.log(user.points);
 			console.log('added new user');
 
 		}
