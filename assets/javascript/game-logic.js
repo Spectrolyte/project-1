@@ -259,10 +259,6 @@ function checkReturningUser () {
 		}
 		// else, create new child node in the returning folder
 		else {
-			var user = snapshot.child(ID).val();
-			
-			name = user.displayName;
-			points = user.points;
 			// this code snippet creates new child in the returning folder in Firebase
 			// each child name will be users' ID that will hold user name and points
 			database.ref('/returning/' + ID).set({
@@ -270,6 +266,11 @@ function checkReturningUser () {
 				points: 0
 			})
 
+			var user = snapshot.child(ID).val();
+			
+			name = user.displayName;
+			points = user.points;
+			
 			playerNum++;
 			// add user to players folder
 			database.ref('/players/' + playerNum.toString()).set({
