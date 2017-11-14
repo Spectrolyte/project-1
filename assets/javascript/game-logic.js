@@ -195,14 +195,6 @@ var playersRef = database.ref('/players');
 // folder in Firebase that will hold Google Auth data
 var returningPlayersRef = database.ref('/returning');
 
-// testing for access to user data
-/*returningPlayersRef.on('value', function (snapshot) {
-	console.log(snapshot.val());
-	console.log(snapshot.val().diana);
-	console.log(snapshot.val().diana.ID);
-	console.log(snapshot.val().diana.points);
-})*/
-
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
   	UID = user.uid;
@@ -212,69 +204,57 @@ firebase.auth().onAuthStateChanged(function(user) {
     console.log(UID);
     console.log(displayName);
     console.log('signed in');
+    console.log('=================================');
 
-    /*checkReturningUser();*/
-
-
+    // add to returningUsers object
 	var returningRef = database.ref('/returningUsers/' + UID);
-	
+
 	returningRef.transaction(function(currentData) {
 	  if (currentData === null) {
 	    return {name: displayName, points: 0};
 	  } else {
-	    console.log('User ada already exists.');
+	    console.log('User' + displayName + 'already exists.');
 	    return; // Abort the transaction.
 	  }
 	}, function(error, committed, snapshot) {
 	  if (error) {
 	    console.log('Transaction failed abnormally!', error);
 	  } else if (!committed) {
-	    console.log('We aborted the transaction (because UID already exists).');
+	    console.log('We aborted the transaction (because' + UID + 'already exists).');
 	  } else {
-	    console.log('User ada added!');
+	    console.log('User' + displayName + 'added!');
 	  }
-	  console.log("UID's data: ", snapshot.val());
+	  console.log(displayName + '\'s data: ,' + snapshot.val());
 	});
+
+	// add to game-room
+	var currentPlayersRef = database.ref('/currentPlayers/' + UID);
+
+	currentPlayersRef.transaction(function(currentData) {
+	  if (currentData === null) {
+	    return {name: displayName, points: 0};
+	  } else {
+	    console.log('User' + displayName + 'already added to game-room.');
+	    return; // Abort the transaction.
+	  }
+	}, function(error, committed, snapshot) {
+	  if (error) {
+	    console.log('Transaction failed abnormally!', error);
+	  } else if (!committed) {
+	    console.log('We aborted the transaction (because' + UID + 'already added to game-room).');
+	  } else {
+	    console.log('User' + displayName + 'added!');
+	  }
+	  console.log(displayName + '\'s data: ,' + snapshot.val());
+	});
+
 
   } else {
     // No user is signed in.
     console.log('REEEEE');
   }
+
 });
-
-// when the user logs in, check if they've already played before -- run function upon load
-function checkReturningUser () {
-
-	returningPlayersRef.on('value', function (snapshot) {
-		console.log(snapshot.val());
-		// if user is a returning user, set data specific to user and add child to playersRef folder
-		if (snapshot.child(UID).exists()) {
-			var user = snapshot.child(UID).val();
-
-			console.log(user);
-			console.log(user.name);
-			console.log(user.points);
-			console.log('hello again');
-		}
-		// else, create new child node in the returning folder
-		else {
-			// this code snippet creates new child in the returning folder in Firebase
-			// each child name will be users' ID that will hold user name and points
-			database.ref('/returning/' + UID).set({
-				name: name,
-				points: 0
-			})
-
-			var user = snapshot.child(UID).val();
-
-			console.log(user);
-			console.log(user.name);
-			console.log(user.points);
-			console.log('added new user');
-
-		}
-	})
-}
 
 playersRef.on('value', function (snapshot) {
 
@@ -282,60 +262,6 @@ playersRef.on('value', function (snapshot) {
 	console.log('current players: ' + currentPlayers)
 
 })
-
-// check the number of current players
-// assumes that the user logged in via Google Auth already
-// takes in their data as arguments
-/*function checkNumPlayers (name, UID, points) {
-
-	var player1Ref;
-	var player2Ref;
-
-// if less than two players, check if player1 exists
-	// if player is a returning player -- look for their stored UID, displayname, and points
-	// reassign points to their accumulated points
-	// else, default points to 0
-	if (currentPlayers < 2) {
-
-    if (player1Exists) {
-    playerNum = 2;
-    // sets second player to player2
-    database.ref('/players/' + playerNum).set({
-		name: name,
-		ID: UID,
-		points: points
-	})
-
-	player2Exists = true;
-	// call startGame
-    }
-    else {
-    playerNum = 1;
-    // sets first player to player1
-
-    database.ref('/players/' + playerNum).set({
-		name: name,
-		ID: UID,
-		points: points
-	})
-
-	player1Exists = true;
-
-    }
-
-// create a childnode with player number
-// set the name to the UID, and their points
-
-    // On disconnect remove this user's player object
-    player1Ref.onDisconnect().remove();
-    player2Ref.onDisconnect().remove();
-}
-
-// if more than 2 players, prevent more players from connecting
-    else {
-    	alert("Sorry, Game Full! Try Again Later!");
-  }
-}*/
 
 function startGame () {
 	// start game
