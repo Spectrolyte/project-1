@@ -213,14 +213,34 @@ firebase.auth().onAuthStateChanged(function(user) {
     console.log(displayName);
     console.log('signed in');
 
-    checkReturningUser();
+    /*checkReturningUser();*/
+
+
+	var returningRef = database.ref('/returningUsers/' + UID);
+	
+	returningRef.transaction(function(currentData) {
+	  if (currentData === null) {
+	    return {name: displayName, points: 0};
+	  } else {
+	    console.log('User ada already exists.');
+	    return; // Abort the transaction.
+	  }
+	}, function(error, committed, snapshot) {
+	  if (error) {
+	    console.log('Transaction failed abnormally!', error);
+	  } else if (!committed) {
+	    console.log('We aborted the transaction (because UID already exists).');
+	  } else {
+	    console.log('User ada added!');
+	  }
+	  console.log("UID's data: ", snapshot.val());
+	});
 
   } else {
     // No user is signed in.
     console.log('REEEEE');
   }
 });
-
 
 // when the user logs in, check if they've already played before -- run function upon load
 function checkReturningUser () {
